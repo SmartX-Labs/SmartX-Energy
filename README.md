@@ -5,6 +5,12 @@
 소규모의 데이터 센터를 위하여 온습도 및 전력 사용 현황과 박스 별 상태 정보를 수집하고,
 이를 바탕으로 원활한 관제를 이루고자 하는 IoT-Cloud 서비스입니다.
 
+ * IoT: Connect & Collect
+ * Cloud: Data Lake & Analytics
+ * Services: User Supports
+ * Common: Common modules
+
+
 ## Update List
 ### 2016-10-06
   * Raspberry Pi에서 박스 상태 정보 수집을 위해 동작하는 Docker Iamge 빌드를 위한 파일 추가 (SmartX-Energy/IoT)
