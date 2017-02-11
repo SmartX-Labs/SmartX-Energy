@@ -76,7 +76,7 @@ h6,
 /*======================================*/
 #content-container {
   position: relative;
-  padding-top: 80px;
+  padding-top: 40px;
   padding-bottom: 100px;
   background-color: #f1f4f7;
 }
@@ -165,7 +165,7 @@ h6,
 /*======================================*/
 @media (min-width: 768px) {
   #content-container {
-    padding-top: 40px;
+    padding-top: 0px;
   }
   #page-title {
     display: table;

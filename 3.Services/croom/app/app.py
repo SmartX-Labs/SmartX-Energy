@@ -17,7 +17,10 @@ celery.conf.update(app.config)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    array = [[15.2,2,3],[4,5,6]]
+    server_array = [[1,2,3,4,5,6,7,8,9,10,11],[4,5,6,7,8,9,10,11,12,13,11],[4,5,6,7,8,9,10,11,12,13,11]]
+
+    return render_template('index.html', array=array, server_array=server_array)
 
 if __name__ == '__main__':
     app.run(debug=True)

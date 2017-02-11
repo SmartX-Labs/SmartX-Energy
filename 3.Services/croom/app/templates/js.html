@@ -1,5 +1,184 @@
-<script src="{{ url_for('static', filename='js/jquery-2.2.1.min.js') }}"/>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"/>
-<script src="{{ url_for('static', filename='js/nifty.min.js') }}"/>
-<script src="{{ url_for('static', filename='js/demo/nifty-demo.min.js') }}"/>
-<script src="{{ url_for('static', filename='js/demo/dashboard.js') }}"/>
+<script src="{{ url_for('static', filename='js/jquery-2.2.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nifty.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/rainbowvis.js') }}"></script>
+<script src="{{ url_for('static', filename='js/c3.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3.js') }}"></script>
+
+
+
+<script type="text/javascript">
+var startColor = '#90CAF9';
+var endColor = '#FF0000'
+var rainbow = new Rainbow();
+rainbow.setNumberRange(0,30);
+rainbow.setSpectrum(startColor, endColor);
+
+function colorPalette(rowIndex, colIndex, rowLength, degree) {
+
+  var color = rainbow.colourAt(degree);
+  index = (rowIndex - 1) * rowLength + colIndex - 1;
+
+  // console.log(index)
+  // console.log(color)
+
+  $(".panel-colorful")[index].setAttribute("style", "background-color: #" + color + ";");
+
+  return color;
+};
+
+$(document).ready(function(){
+  for(i=0; i<10; i++) {
+    var color = rainbow.colourAt(i*3);
+    $(".color-palette")[i].setAttribute("style", "background-color: #" + color + ";");
+  }
+
+  var roomChart = c3.generate({
+    bindto: "#room-chart",
+    data: {
+      columns: [
+        ['data', 25]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 30, // 100 is default
+      units: '°C',
+      //    width: 39 // for adjusting arc thickness
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        //  unit: 'value', // percentage is default
+        // max: 30, // 100 is default
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 180
+    }
+  });
+
+  var cpuChart = c3.generate({
+    bindto: "#cpu-chart",
+    data: {
+      columns: [
+        ['data', 5]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 30, // 100 is default
+      units: 'CPU',
+      //    width: 39 // for adjusting arc thickness
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        //  unit: 'value', // percentage is default
+        // max: 30, // 100 is default
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 120
+    }
+  });
+
+  var memChart = c3.generate({
+    bindto: "#mem-chart",
+    data: {
+      columns: [
+        ['data', 25]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 30, // 100 is default
+      units: 'MEM',
+      //    width: 39 // for adjusting arc thickness
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        //  unit: 'value', // percentage is default
+        // max: 30, // 100 is default
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 120
+    }
+  });
+
+  var diskChart = c3.generate({
+    bindto: "#disk-chart",
+    data: {
+      columns: [
+        ['data', 15]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 30, // 100 is default
+      units: 'DISK',
+      //    width: 39 // for adjusting arc thickness
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        //  unit: 'value', // percentage is default
+        // max: 30, // 100 is default
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 120
+    }
+  });
+
+
+});
+
+
+</script>
