@@ -4,7 +4,9 @@ from flask import Flask, request, render_template, session, flash, redirect, \
 
 from flask_socketio import SocketIO, emit, disconnect
 from celery import Celery
+from db import Influx
 
+# Flask configuration
 app = Flask(__name__)
 #app.config['SECRET_KEY'] = ''
 
@@ -19,6 +21,9 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
+# InfluxDB configuration
+influx = Influx()
+
 @app.route('/')
 def index():
     array = [[15.2,2,3],[4,5,6]]
@@ -29,6 +34,7 @@ def index():
 def background_thread():
     count = 0;
     while True:
+        influx.query_temp();
         socketio.sleep(2)
         count += 1
         socketio.emit('my_response',
