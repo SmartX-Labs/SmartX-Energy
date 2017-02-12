@@ -35,9 +35,10 @@ def index():
 def background_thread():
     while True:
         socketio.sleep(2)
-        temp_list = influx.query_temp_by_id()
-        temp = json.dumps(temp_list)
-        socketio.emit('background_thread', {'temp': temp},)
+        temp = influx.query_temp_by_id()
+        temp_mean = influx.get_mean_from_temp()
+        temp = json.dumps(temp)
+        socketio.emit('background_thread', {'temp': temp, 'temp_mean': temp_mean},)
 
 @socketio.on('connect')
 def connect():

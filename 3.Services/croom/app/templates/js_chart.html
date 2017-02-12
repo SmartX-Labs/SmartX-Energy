@@ -1,12 +1,17 @@
 <script type="text/javascript">
 
+var roomChart;
+var cpuChart;
+var memChart;
+var diskChart;
+
 $(document).ready(function(){
 
-  var roomChart = c3.generate({
+  roomChart = c3.generate({
     bindto: "#room-chart",
     data: {
       columns: [
-        ['data', 25]
+        ['temperature', 0]
       ],
       type: 'gauge',
       onclick: function (d, i) { console.log("onclick", d, i); },
@@ -35,14 +40,7 @@ $(document).ready(function(){
     }
   });
 
-  setTimeout(function () {
-      roomChart.load({
-          unload: true,
-          columns: ['data', 0]
-      });
-  }, 1000);
-
-  var cpuChart = c3.generate({
+  cpuChart = c3.generate({
     bindto: "#cpu-chart",
     data: {
       columns: [
@@ -75,7 +73,7 @@ $(document).ready(function(){
     }
   });
 
-  var memChart = c3.generate({
+  memChart = c3.generate({
     bindto: "#mem-chart",
     data: {
       columns: [
@@ -108,7 +106,7 @@ $(document).ready(function(){
     }
   });
 
-  var diskChart = c3.generate({
+  diskChart = c3.generate({
     bindto: "#disk-chart",
     data: {
       columns: [

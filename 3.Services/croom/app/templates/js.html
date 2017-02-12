@@ -22,19 +22,23 @@ $(document).ready(function() {
     socket.emit('my event', {data: 'I\'m connected!'});
   });
 
+
   socket.on('background_thread', function(msg) {
     temp = JSON.parse(msg.temp);
+    temp_mean = parseInt(msg.temp_mean);
 
     for (i=0; i<temp.length; i++) {
-
       colorPalette(i, temp[i].temperature);
       updateTemp(i, temp[i].temperature, temp[i].humidity);
-      console.log('temperature: ' + temp[i].temperature);
-      console.log('humidity: ' + temp[i].humidity);
     }
+    data = [['temperature', temp_mean]];
+    roomChart.load({
+      unload: true,
+      columns: data
+    });
+
 
   });
-
 });
 
 </script>
