@@ -1,0 +1,22 @@
+<script type="text/javascript">
+var startColor = '#90CAF9';
+var endColor = '#FF0000'
+var rainbow = new Rainbow();
+rainbow.setNumberRange(0,30);
+rainbow.setSpectrum(startColor, endColor);
+
+function colorPalette(rowIndex, colIndex, rowLength, degree) {
+
+  var color = rainbow.colourAt(degree);
+  index = (rowIndex - 1) * rowLength + colIndex - 1;
+  $(".panel-colorful")[index].setAttribute("style", "background-color: #" + color + ";");
+  return color;
+};
+
+$(document).ready(function(){
+  for(i=0; i<10; i++) {
+    var color = rainbow.colourAt(i*3);
+    $(".color-palette")[i].setAttribute("style", "background-color: #" + color + ";");
+  }
+});
+</script>

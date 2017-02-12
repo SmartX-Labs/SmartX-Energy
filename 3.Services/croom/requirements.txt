@@ -3,10 +3,14 @@ billiard==3.5.0.2
 celery==4.0.2
 click==6.7
 Flask==0.12
+Flask-SocketIO==2.8.2
 itsdangerous==0.24
 Jinja2==2.9.5
 kombu==4.0.2
 MarkupSafe==0.23
+python-engineio==1.2.1
+python-socketio==1.7.0
 pytz==2016.10
+six==1.10.0
 vine==1.1.3
 Werkzeug==0.11.15
