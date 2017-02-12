@@ -5,12 +5,13 @@
 <script src="{{ url_for('static', filename='js/c3.js') }}"></script>
 <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
 
-{% include 'js_palette.html' %}
+{% include 'js_ui.html' %}
 {% include 'js_chart.html' %}
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 
 <script type="text/javascript" charset="utf-8">
+
 $(document).ready(function() {
 
   namespace = ''; //TODO Add it after complete control functions
@@ -21,10 +22,19 @@ $(document).ready(function() {
     socket.emit('my event', {data: 'I\'m connected!'});
   });
 
-  socket.on('my_response', function(msg) {
-    console.log('Received #' + msg.count + ': ' + msg.data);
+  socket.on('background_thread', function(msg) {
+    temp = JSON.parse(msg.temp);
+
+    for (i=0; i<temp.length; i++) {
+
+      colorPalette(i, temp[i].temperature);
+      updateTemp(i, temp[i].temperature, temp[i].humidity);
+      console.log('temperature: ' + temp[i].temperature);
+      console.log('humidity: ' + temp[i].humidity);
+    }
+
   });
 
-
 });
+
 </script>

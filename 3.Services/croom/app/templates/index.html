@@ -96,30 +96,25 @@
                       <div class="color-palette">&nbsp;</div>
                       <div class="color-palette text-center"><span>30°C</span></div>
                     </div>
-
-                    {% for row in array %}
-                    {% set rowloop = loop %}
                     <div class="row mar-no">
 
-                      {% for col in row %}
-                      <div class="col-xs-3 col-md-3 pad-no">
-                        <div class="panel panel-success panel-colorful mar-no">
+                      {% for info in temp %}
+                      <div class="col-xs-4 col-md-4 pad-no">
+                        <div class="panel panel-success panel-colorful mar-no server-room">
 
                           <script type="text/javascript">
-                          colorPalette({{ rowloop.index}}, {{ loop.index }}, {{ row|length }}, {{col}});
+                          colorPalette({{ loop.index-1 }}, {{ info.temperature }});
                           </script>
 
                           <div class="pad-all">
                             <center>
-                              <span class="text-bold">{{ loop.index }}</span><br>
-                              <span class="text-bold">{{col}}</span>
+                              <span class="text-bold server-room-temp">{{ info.temperature }}</span><span class="text-bold">℃</span><br>
+                              <i class="glyphicon glyphicon-tint"></i><span class="text-bold server-room-hum">{{ info.humidity }}</span>
                             </div>
                           </div>
                         </div>
                         {% endfor %}
-
                       </div>
-                      {% endfor %}
 
                     </div>
 

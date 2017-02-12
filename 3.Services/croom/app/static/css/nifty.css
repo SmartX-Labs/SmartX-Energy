@@ -99,16 +99,16 @@ h6,
 /* PAGE CONTENT */
 /*======================================*/
 #page-content {
-  padding: 5px 20px 0;
+  padding: 20px 20px 0;
 }
 @media (min-width: 768px) {
   #page-content {
-    padding: 5px 20px 0;
+    padding: 55px 20px 0;
   }
 }
 @media (min-width: 992px) {
   #page-content {
-    padding: 5px 25px 0;
+    padding: 55px 25px 0;
   }
 }
 /* SEARCHBOX */

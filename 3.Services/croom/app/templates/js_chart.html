@@ -1,4 +1,5 @@
 <script type="text/javascript">
+
 $(document).ready(function(){
 
   var roomChart = c3.generate({
@@ -33,6 +34,13 @@ $(document).ready(function(){
       height: 180
     }
   });
+
+  setTimeout(function () {
+      roomChart.load({
+          unload: true,
+          columns: ['data', 0]
+      });
+  }, 1000);
 
   var cpuChart = c3.generate({
     bindto: "#cpu-chart",
@@ -133,4 +141,5 @@ $(document).ready(function(){
     }
   });
 });
+
 </script>

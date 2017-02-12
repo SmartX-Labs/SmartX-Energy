@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, request, render_template, session, flash, redirect, \
     url_for, jsonify
 
@@ -26,19 +27,17 @@ influx = Influx()
 
 @app.route('/')
 def index():
-    array = [[15.2,2,3],[4,5,6]]
+    temp = influx.query_temp_by_id()
     server_array = [[1,2,3,4,5,6,7,8,9,10,11],[4,5,6,7,8,9,10,11,12,13,11],[4,5,6,7,8,9,10,11,12,13,11]]
     return render_template('index.html', async_mode=socketio.async_mode,
-                            array=array, server_array=server_array)
+                            temp=temp, server_array=server_array)
 
 def background_thread():
-    count = 0;
     while True:
-        influx.query_temp();
         socketio.sleep(2)
-        count += 1
-        socketio.emit('my_response',
-                      {'data': 'Server generated event', 'count': count},)
+        temp_list = influx.query_temp_by_id()
+        temp = json.dumps(temp_list)
+        socketio.emit('background_thread', {'temp': temp},)
 
 @socketio.on('connect')
 def connect():
