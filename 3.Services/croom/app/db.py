@@ -1,12 +1,6 @@
 import os
 from influxdb import InfluxDBClient
 
-os.environ['HOST'] = '210.125.84.55'
-os.environ['PORT'] = '8086'
-os.environ['USERNAME'] = 'root'
-os.environ['PW'] = 'root'
-os.environ['DATABASE'] = 'senics'
-
 class Influx():
     id_number = 0;
 
@@ -22,50 +16,39 @@ class Influx():
     def query(self, query):
         return self.client.query(str(query))
 
-    def query_ids_from_temp(self):
-        ids = []
-        tag_query = self.client.query("SHOW TAG VALUES FROM temp WITH KEY = id")
-        tags = list(tag_query)[0]
+    def query_tag(self, measurement, tag_key):
+        tags = []
+        tag_query = self.client.query("SHOW TAG VALUES FROM " + measurement + " WITH KEY = " + tag_key)
+        tag_list = list(tag_query)[0]
 
-        for tag in tags:
-            ids.append(tag['value'])
+        for item in tag_list:
+            tags.append(item['value'])
+        return tags
 
-        self.id_number = len(ids)
-        return ids
-
-    def query_temp(self, limit=None):
-        query = "SELECT * FROM temp ORDER BY time DESC"
+    def query_measurement(self, measurement, limit=None):
+        query = "SELECT * FROM " + measurement + " ORDER BY time DESC"
         limit_option = '';
         if (limit != None):
             limit_option = " LIMIT " + str(limit);
         return self.client.query(query + limit_option)
 
-    def query_temp_by_id(self, limit=1):
-        query = "SELECT * FROM temp WHERE id="
+    def query_measurement_distinct_tag(self, measurement, tag_key, limit=1):
+        query = "SELECT * FROM " + measurement + " WHERE "+ tag_key + "="
         option = " ORDER BY time DESC LIMIT "
-        ids = self.query_ids_from_temp();
-        temp_list = []
+        tag_list = self.query_tag(measurement, tag_key);
+        measurement_list = []
 
-        for i in ids:
-            temp = self.client.query(query + '\'' + i + '\'' + option + str(limit))
-            temp_array = list(temp)[0]
-            for item in temp_array:
-                temp_list.append(item)
-        return temp_list
+        for item in tag_list:
+            measurement = self.client.query(query + '\'' + item + '\'' + option + str(limit))
+            measurement_list += list(measurement)[0]
+        return measurement_list
 
-    def get_mean_from_temp(self, n=100):
-        samples = self.query_temp_by_id(n)
+    def get_mean(self, measurement, tag, field, limit=10):
+        samples = self.query_measurement_distinct_tag(measurement, tag, limit)
         mean = 0
         total = 0
 
         for sample in samples:
-            total += sample['temperature']
-        mean = total/n/self.id_number
+            total += sample[field]
+        mean = total/len(samples)
         return mean
-
-    def query_resource(self, limit=None):
-        query = "SELECT * FROM resource ORDER BY time DESC"
-        limit_option = '';
-        if (limit != None):
-            limit_option = " LIMIT " + str(limit);
-        return self.client.query(query + limit_option)
