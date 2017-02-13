@@ -28,17 +28,33 @@ influx = Influx()
 @app.route('/')
 def index():
     temp = influx.query_measurement_distinct_tag("temp", "id")
-    server_array = [[1,2,3,4,5,6,7,8,9,10,11],[4,5,6,7,8,9,10,11,12,13,11],[4,5,6,7,8,9,10,11,12,13,11]]
+    resource = influx.query_measurement_distinct_tag("resource", "deviceId")
+    server_array = [[1,2,3,4,5,6,7,8,9,10,11],[4,5,6,7,8,9,10,11,12,13,11]]
     return render_template('index.html', async_mode=socketio.async_mode,
-                            temp=temp, server_array=server_array)
+                            temp=temp, server_array=server_array, resource=resource)
 
 def background_thread():
     while True:
-        socketio.sleep(2)
+        socketio.sleep(1)
+
         temp = influx.query_measurement_distinct_tag("temp", "id")
         temp = json.dumps(temp)
+        resource = influx.query_measurement_distinct_tag("resource", "deviceId")
+        resource = json.dumps(resource)
+
         temp_mean = influx.get_mean("temp", "id", "temperature")
-        socketio.emit('background_thread', {'temp': temp, 'temp_mean': temp_mean},)
+        resource_cpu_mean = influx.get_mean("resource", "deviceId", "cpu")
+        resource_mem_mean = influx.get_mean("resource", "deviceId", "memory")
+        resource_disk_mean = influx.get_mean("resource", "deviceId", "disk")
+
+        socketio.emit('background_thread', {
+                        'temp': temp,
+                        'resource': resource,
+                        'temp_mean': temp_mean,
+                        'resource_cpu_mean': resource_cpu_mean,
+                        'resource_mem_mean': resource_mem_mean,
+                        'resource_disk_mean': resource_disk_mean
+                        },)
 
 @socketio.on('connect')
 def connect():

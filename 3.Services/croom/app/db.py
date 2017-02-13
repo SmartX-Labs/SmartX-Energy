@@ -1,8 +1,13 @@
 import os
 from influxdb import InfluxDBClient
 
+os.environ['HOST'] = '210.125.84.55'
+os.environ['PORT'] = '8086'
+os.environ['USERNAME'] = 'root'
+os.environ['PW'] = 'root'
+os.environ['DATABASE'] = 'senics'
+
 class Influx():
-    id_number = 0;
 
     def __init__(self):
         self.client = InfluxDBClient(

@@ -140,7 +140,35 @@
 
                   <div class="panel-body">
                     <div class="col-lg-9 pad-no">
-                      {% for row in server_array %}
+                      <div class="col-md-6">
+                        <p class="text-muted"><i class="glyphicon glyphicon glyphicon-menu-right text-sm"></i> Servers : rpis</p>
+                        <div class="row mar-no">
+                          <div class="table-responsive">
+                            <table class="table table-bordered">
+                              <tbody>
+                              {% for info in resource %}
+                                <tr>
+                                  <td class="text-center">{{ info.deviceId }}</td>
+                                  <td>
+                                    <div class="col-xs-4">
+                                      <span class="label label-danger">CPU</span><span class="mar-hor server-rack-cpu">{{ info.cpu }}%</span>
+                                    </div>
+                                    <div class="col-xs-4">
+                                      <span class="label label-info">MEM</span><span class="mar-hor server-rack-mem">{{ (info.memory/1000)|round(1, 'floor') }}MiB</span>
+                                    </div>
+                                    <div class="col-xs-4">
+                                      <span class="label label-dark">DISK</span><span class="mar-hor server-rack-disk">{{ info.disk }}KiB</span>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- {% for row in server_array %}
                       <div class="col-md-6">
                         <p class="text-muted"><i class="glyphicon glyphicon glyphicon-menu-right text-sm"></i> server {{ row }}</p>
 
@@ -170,7 +198,7 @@
                         </div>
 
                       </div>
-                      {% endfor %}
+                      {% endfor %} -->
                     </div>
 
 

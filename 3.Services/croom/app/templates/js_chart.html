@@ -44,7 +44,7 @@ $(document).ready(function(){
     bindto: "#cpu-chart",
     data: {
       columns: [
-        ['data', 5]
+        ['usage', 0]
       ],
       type: 'gauge',
       onclick: function (d, i) { console.log("onclick", d, i); },
@@ -59,7 +59,7 @@ $(document).ready(function(){
         show: true // to turn off the min/max labels.
       },
       min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-      max: 30, // 100 is default
+      max: 100, // 100 is default
       units: 'CPU',
     },
     color: {
@@ -69,7 +69,7 @@ $(document).ready(function(){
       }
     },
     size: {
-      height: 180
+      height: 120
     }
   });
 
@@ -77,7 +77,7 @@ $(document).ready(function(){
     bindto: "#mem-chart",
     data: {
       columns: [
-        ['data', 25]
+        ['usage', 0]
       ],
       type: 'gauge',
       onclick: function (d, i) { console.log("onclick", d, i); },
@@ -92,7 +92,7 @@ $(document).ready(function(){
         show: true // to turn off the min/max labels.
       },
       min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-      max: 30, // 100 is default
+      max: 1000, // 100 is default
       units: 'MEM',
     },
     color: {
@@ -102,7 +102,7 @@ $(document).ready(function(){
       }
     },
     size: {
-      height: 180
+      height: 120
     }
   });
 
@@ -110,7 +110,7 @@ $(document).ready(function(){
     bindto: "#disk-chart",
     data: {
       columns: [
-        ['data', 15]
+        ['usage', 0]
       ],
       type: 'gauge',
       onclick: function (d, i) { console.log("onclick", d, i); },
@@ -125,7 +125,7 @@ $(document).ready(function(){
         show: true // to turn off the min/max labels.
       },
       min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-      max: 30, // 100 is default
+      max: 100, // 100 is default
       units: 'DISK',
     },
     color: {
@@ -135,7 +135,7 @@ $(document).ready(function(){
       }
     },
     size: {
-      height: 180
+      height: 120
     }
   });
 });
