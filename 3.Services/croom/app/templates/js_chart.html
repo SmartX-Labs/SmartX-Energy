@@ -1,0 +1,143 @@
+<script type="text/javascript">
+
+var roomChart;
+var cpuChart;
+var memChart;
+var diskChart;
+
+$(document).ready(function(){
+
+  roomChart = c3.generate({
+    bindto: "#room-chart",
+    data: {
+      columns: [
+        ['temperature', 0]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 30, // 100 is default
+      units: '°C',
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 180
+    }
+  });
+
+  cpuChart = c3.generate({
+    bindto: "#cpu-chart",
+    data: {
+      columns: [
+        ['usage', 0]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 100, // 100 is default
+      units: 'CPU',
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 120
+    }
+  });
+
+  memChart = c3.generate({
+    bindto: "#mem-chart",
+    data: {
+      columns: [
+        ['usage', 0]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 1000, // 100 is default
+      units: 'MEM',
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 120
+    }
+  });
+
+  diskChart = c3.generate({
+    bindto: "#disk-chart",
+    data: {
+      columns: [
+        ['usage', 0]
+      ],
+      type: 'gauge',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: 100, // 100 is default
+      units: 'DISK',
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        values: [10, 20, 30]
+      }
+    },
+    size: {
+      height: 120
+    }
+  });
+});
+
+</script>
