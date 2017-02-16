@@ -10,7 +10,6 @@ from db import RedisWorker
 # Flask configuration
 app = Flask(__name__)
 
-
 # Celery configuration
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'

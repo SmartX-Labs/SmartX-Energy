@@ -93,9 +93,9 @@ class RedisWorker():
 
         return {'keys': keys, 'groups': groups}
 
-    def mean(self, result_list, field_key):
-        numerator = float(sum(v[field_key] for v in result_list))
-        denominator = max(len(result_list), 1)
+    def mean_dump_data(self, dump_data, field_key):
+        numerator = float(sum(v[field_key] for v in dump_data))
+        denominator = max(len(dump_data), 1)
         return numerator/denominator
 
     def set_keyby_data(self, measurement, tag_key, minutes=1):
@@ -133,6 +133,19 @@ class RedisWorker():
                 keyby_data.append(origin_data)
 
         return keyby_data
+
+    def get_keyby_data_last(self, measurement, tag_key=None):
+        keys = self.get_keys(measurement)
+
+        if tag_key in keys:
+            keyby_data_last = pickle.loads(self.worker.get(measurement+tag_key))[-1]
+        else:
+            keyby_data_last = []
+            for key in keys:
+                origin_data = pickle.loads(self.worker.get(measurement+key))
+                keyby_data_last.append(origin_data[-1])
+
+        return keyby_data_last
 
     def get_dump_data(self, measurement):
         dump_data = pickle.loads(self.worker.get(measurement+"-dump"))

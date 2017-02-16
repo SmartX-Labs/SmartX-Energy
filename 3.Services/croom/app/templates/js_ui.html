@@ -2,9 +2,12 @@
 
 var startColor = '#90CAF9';
 var endColor = '#FF0000'
+var startTemp = 15;
+var endTemp = 35;
 var rainbow = new Rainbow();
-rainbow.setNumberRange(0,30);
+
 rainbow.setSpectrum(startColor, endColor);
+rainbow.setNumberRange(startTemp, endTemp);
 
 function colorPalette(index, degree) {
   var color = rainbow.colourAt(degree);
@@ -31,8 +34,10 @@ function updateResource(index, cpu, mem, disk) {
 };
 
 $(document).ready(function(){
+  var weight = (endTemp-startTemp)/10;
+
   for(i=0; i<10; i++) {
-    var color = rainbow.colourAt(i*3);
+    var color = rainbow.colourAt(startTemp+i*weight);
     $(".color-palette")[i].setAttribute("style", "background-color: #" + color + ";");
   }
 });
