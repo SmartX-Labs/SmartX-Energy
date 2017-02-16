@@ -2,6 +2,7 @@ import os
 import json
 from flask import Flask, request, render_template, session, flash, redirect, \
     url_for, jsonify
+import urllib3
 
 from flask_socketio import SocketIO, emit, disconnect
 from celery import Celery
@@ -24,9 +25,16 @@ celery.conf.update(app.config)
 # Worker configuration
 worker = RedisWorker()
 
+# urllib3 configuration
+http = urllib3.PoolManager()
+url = ''
+
 @celery.task
 def send_async_request(air_id, temp, action):
-    print("implement")
+    print("request: " + air_id, temp, action)
+    request = http.request('POST', url,
+                        fields={'name': air_id, 'temperature': temp, 'direction': action})
+    return request.status
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -34,7 +42,14 @@ def index():
         temp = worker.get_keyby_data_last("temp")
         resource = worker.get_keyby_data_last("resource")
         air_temp_1 = worker.get_air_temp("1")
+        if air_temp_1 == None:
+            air_temp_1 = 20
+            worker.set_air_temp("1", air_temp_1)
         air_temp_2 = worker.get_air_temp("2")
+        if air_temp_2 == None:
+            air_temp_2 = 20
+            worker.set_air_temp("2", air_temp_1)
+
         return render_template('index.html', async_mode=socketio.async_mode,
                                 temp=temp, resource=resource,
                                 air_temp_1=air_temp_1, air_temp_2=air_temp_2)
@@ -42,20 +57,17 @@ def index():
 @app.route('/control', methods=['POST'])
 def control():
     air_id = request.form['id']
-    action = request.form['action']
+    action = int(request.form['action'])
 
-    send_async_request.delay(air_id, temp, action)
 
     temp = worker.get_air_temp(air_id)
-    if temp == None:
-        temp = 20
-    else:
-        temp += int(action)
-
+    send_async_request.delay(air_id, temp, action)
+    temp += action
     worker.set_air_temp(air_id, temp)
 
     return jsonify({}), 200, {'temperature': temp}
 
+# SocketIO
 def background_thread():
     while True:
 
