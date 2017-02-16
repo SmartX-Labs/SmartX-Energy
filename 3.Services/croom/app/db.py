@@ -155,3 +155,14 @@ class RedisWorker():
         self.set_dump_data(measurement)
         self.set_keyby_data(measurement, tag_key)
         print("save: " + measurement)
+
+    def set_air_temp(self, air_id, temp):
+        dump = pickle.dumps(temp)
+        self.worker.set("air-" + air_id, dump)
+
+    def get_air_temp(self, air_id):
+        dump = self.worker.get("air-" + air_id)
+        if dump == None:
+            return None
+        else:
+            return pickle.loads(dump)

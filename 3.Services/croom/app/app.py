@@ -9,7 +9,6 @@ from db import RedisWorker
 
 # Flask configuration
 app = Flask(__name__)
-#app.config['SECRET_KEY'] = ''
 
 # SocketIO configuration
 async_mode = None
@@ -25,12 +24,37 @@ celery.conf.update(app.config)
 # Worker configuration
 worker = RedisWorker()
 
-@app.route('/')
+@celery.task
+def send_async_request(air_id, temp, action):
+    print("implement")
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    temp = worker.get_keyby_data_last("temp")
-    resource = worker.get_keyby_data_last("resource")
-    return render_template('index.html', async_mode=socketio.async_mode,
-                            temp=temp, resource=resource)
+    if request.method =='GET':
+        temp = worker.get_keyby_data_last("temp")
+        resource = worker.get_keyby_data_last("resource")
+        air_temp_1 = worker.get_air_temp("1")
+        air_temp_2 = worker.get_air_temp("2")
+        return render_template('index.html', async_mode=socketio.async_mode,
+                                temp=temp, resource=resource,
+                                air_temp_1=air_temp_1, air_temp_2=air_temp_2)
+
+@app.route('/control', methods=['POST'])
+def control():
+    air_id = request.form['id']
+    action = request.form['action']
+
+    send_async_request.delay(air_id, temp, action)
+
+    temp = worker.get_air_temp(air_id)
+    if temp == None:
+        temp = 20
+    else:
+        temp += int(action)
+
+    worker.set_air_temp(air_id, temp)
+
+    return jsonify({}), 200, {'temperature': temp}
 
 def background_thread():
     while True:

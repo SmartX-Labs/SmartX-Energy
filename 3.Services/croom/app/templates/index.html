@@ -93,20 +93,20 @@
                         <div class="col-xs-6 col-sm-6 pad-no pad-rgt">
                           <div class="panel panel-bordered-primary pad-all">
                             <p>Airconditioner 1</p>
-                              <div class="btn-group">
-                              <button class="btn btn-default panel-bordered-primary"><span class="text-primary text-bold pad-hor">30°C</span></button>
-                              <button class="btn btn-default panel-bordered-primary" type="button" name="button"><i class="glyphicon glyphicon-chevron-up text-primary"></i></button>
-                              <button class="btn btn-default panel-bordered-primary" type="button" name="button"><i class="glyphicon glyphicon-chevron-down text-primary"></i></button>
+                            <div class="btn-group">
+                              <button class="btn btn-default panel-bordered-primary"><span class="control-temp text-primary text-bold pad-hor">{{ air_temp_1 }}°C</span></button>
+                              <button class="btn btn-default panel-bordered-primary" type="button" onclick="control('1', 1)"><i class="glyphicon glyphicon-chevron-up text-primary"></i></button>
+                              <button class="btn btn-default panel-bordered-primary" type="button" onclick="control('1', -1)"><i class="glyphicon glyphicon-chevron-down text-primary"></i></button>
                             </div>
                           </div>
                         </div>
                         <div class="col-xs-6 col-sm-6 pad-no pad-rgt">
                           <div class="panel panel-bordered-primary pad-all">
                             <p>Airconditioner 2</p>
-                              <div class="btn-group">
-                              <button class="btn btn-default panel-bordered-primary"><span class="text-primary text-bold pad-hor">30°C</span></button>
-                              <button class="btn btn-default panel-bordered-primary" type="button" name="button"><i class="glyphicon glyphicon-chevron-up text-primary"></i></button>
-                              <button class="btn btn-default panel-bordered-primary" type="button" name="button"><i class="glyphicon glyphicon-chevron-down text-primary"></i></button>
+                            <div class="btn-group">
+                              <button class="btn btn-default panel-bordered-primary"><span class="control-temp text-primary text-bold pad-hor">{{ air_temp_2 }}°C</span></button>
+                              <button class="btn btn-default panel-bordered-primary" type="button" onclick="control('2', 1)"><i class="glyphicon glyphicon-chevron-up text-primary"></i></button>
+                              <button class="btn btn-default panel-bordered-primary" type="button" onclick="control('2', -1)"><i class="glyphicon glyphicon-chevron-down text-primary"></i></button>
                             </div>
                           </div>
                         </div>
