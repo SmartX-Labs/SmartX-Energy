@@ -96,7 +96,7 @@
                       <div class="color-palette">&nbsp;</div>
                       <div class="color-palette text-center"><span>35°C</span></div>
                     </div>
-                    <div class="row mar-no parallelogram">
+                    <div class="row mar-no pad-btm parallelogram">
 
                       {% for info in temp %}
                       <div class="col-xs-4 pad-no">
@@ -116,12 +116,49 @@
                         {% endfor %}
                       </div>
 
+                      <div class="row mar-no pad-btm">
+                        <p class="text-muted"><i class="glyphicon glyphicon glyphicon-menu-right text-sm"></i> Control Panel for Airconditioner</p>
+                        <div class="col-xs-4 pad-no pad-rgt">
+                          <div class="panel bg-success media pad-all">
+                            <div class="media-left">
+                              <span>30</span>
+                            </div>
+                            <div class="media-body">
+                              <span>up</span>
+                              <span>down</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-4 pad-no pad-rgt">
+                          <div class="panel bg-success media pad-all">
+                            <div class="media-left">
+                              <span>30</span>
+                            </div>
+                            <div class="media-body">
+                              <span>up</span>
+                              <span>down</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-4 pad-no pad-rgt">
+                          <div class="panel bg-success media pad-all">
+                            <div class="media-left">
+                              <span>30</span>
+                            </div>
+                            <div class="media-body">
+                              <span>up</span>
+                              <span>down</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
 
                     <div class="col-lg-offset-2 col-lg-3 pad-no">
                       <p class="text-muted"><i class="glyphicon glyphicon glyphicon-menu-right text-sm"></i> Average Figure</p>
-                      <div id="room-chart"></div>
-
+                      <div id="temp-chart"></div>
+                      <div id="hum-chart"></div>
                     </div>
 
                   </div>

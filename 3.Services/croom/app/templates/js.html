@@ -26,6 +26,7 @@ $(document).ready(function() {
     var temp = JSON.parse(msg.temp);
     var resource = JSON.parse(msg.resource);
     var temp_mean = parseInt(msg.temp_mean);
+    var hum_mean = parseInt(msg.hum_mean);
     var resource_cpu_mean = parseInt(msg.resource_cpu_mean);
     var resource_mem_mean = parseInt(msg.resource_mem_mean);
     var resource_disk_mean = parseInt(msg.resource_disk_mean);
@@ -39,15 +40,20 @@ $(document).ready(function() {
       updateResource(i, resource[i].cpu, resource[i].memory, resource[i].disk);
     }
 
-
     temp_data = [['temperature', temp_mean]];
+    hum_data = [['humidity', hum_mean]];
     cpu_data = [['usage', resource_cpu_mean]];
     mem_data = [['usage', resource_mem_mean/1000 ]];
     disk_data = [['usage', resource_disk_mean]];
 
-    roomChart.load({
+    tempChart.load({
       unload: true,
       columns: temp_data
+    });
+
+    humChart.load({
+      unload: true,
+      columns: hum_data
     });
 
     cpuChart.load({

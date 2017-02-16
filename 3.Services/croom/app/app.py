@@ -44,6 +44,7 @@ def background_thread():
         temp_resource = worker.get_dump_data("resource")
 
         temp_mean = worker.mean_dump_data(temp_dump, "temperature")
+        hum_mean = worker.mean_dump_data(temp_dump, "humidity")
         resource_cpu_mean = worker.mean_dump_data(temp_resource, "cpu")
         resource_mem_mean = worker.mean_dump_data(temp_resource, "memory")
         resource_disk_mean = worker.mean_dump_data(temp_resource, "disk")
@@ -52,6 +53,7 @@ def background_thread():
                         'temp': temp,
                         'resource': resource,
                         'temp_mean': temp_mean,
+                        'hum_mean': hum_mean,
                         'resource_cpu_mean': resource_cpu_mean,
                         'resource_mem_mean': resource_mem_mean,
                         'resource_disk_mean': resource_disk_mean
