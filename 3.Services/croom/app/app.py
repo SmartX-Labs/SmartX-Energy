@@ -29,7 +29,6 @@ influx = Influx()
 def index():
     temp = influx.query_measurement_distinct_tag("temp", "id")
     resource = influx.query_measurement_distinct_tag("resource", "deviceId")
-    server_array = [[1,2,3,4,5,6,7,8,9,10,11],[4,5,6,7,8,9,10,11,12,13,11]]
     return render_template('index.html', async_mode=socketio.async_mode,
                             temp=temp, server_array=server_array, resource=resource)
 
@@ -50,10 +49,10 @@ def background_thread():
         socketio.emit('background_thread', {
                         'temp': temp,
                         'resource': resource,
-                        'temp_mean': temp_mean,
-                        'resource_cpu_mean': resource_cpu_mean,
-                        'resource_mem_mean': resource_mem_mean,
-                        'resource_disk_mean': resource_disk_mean
+                        # 'temp_mean': temp_mean,
+                        # 'resource_cpu_mean': resource_cpu_mean,
+                        # 'resource_mem_mean': resource_mem_mean,
+                        # 'resource_disk_mean': resource_disk_mean
                         },)
 
 @socketio.on('connect')
@@ -68,5 +67,5 @@ def disconnect():
     print('Client disconnected', request.sid)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
     socketio.run(app)

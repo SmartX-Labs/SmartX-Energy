@@ -1,21 +1,27 @@
 import os
+from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 
-os.environ['HOST'] = '210.125.84.55'
-os.environ['PORT'] = '8086'
-os.environ['USERNAME'] = 'root'
-os.environ['PW'] = 'root'
-os.environ['DATABASE'] = 'senics'
+from itertools import groupby
+import json
+import pickle
+import redis
+
+os.environ['INFLUX_HOST'] = '210.125.84.55'
+os.environ['INFLUX_PORT'] = '8086'
+os.environ['INFLUX_USERNAME'] = 'root'
+os.environ['INFLUX_PW'] = 'root'
+os.environ['INFLUX_DATABASE'] = 'senics'
 
 class Influx():
 
     def __init__(self):
         self.client = InfluxDBClient(
-            os.environ['HOST'],
-            os.environ['PORT'],
-            os.environ['USERNAME'],
-            os.environ['PW'],
-            os.environ['DATABASE']
+            os.environ['INFLUX_HOST'],
+            os.environ['INFLUX_PORT'],
+            os.environ['INFLUX_USERNAME'],
+            os.environ['INFLUX_PW'],
+            os.environ['INFLUX_DATABASE']
         )
 
     def query(self, query):
@@ -24,7 +30,11 @@ class Influx():
     def query_tag(self, measurement, tag_key):
         tags = []
         tag_query = self.client.query("SHOW TAG VALUES FROM " + measurement + " WITH KEY = " + tag_key)
-        tag_list = list(tag_query)[0]
+
+        if tag_query != None:
+            tag_list = list(tag_query)[0]
+        else:
+            return 'No measurement or tag'
 
         for item in tag_list:
             tags.append(item['value'])
@@ -33,7 +43,7 @@ class Influx():
     def query_measurement(self, measurement, limit=None):
         query = "SELECT * FROM " + measurement + " ORDER BY time DESC"
         limit_option = '';
-        if (limit != None):
+        if limit != None:
             limit_option = " LIMIT " + str(limit);
         return self.client.query(query + limit_option)
 
@@ -44,16 +54,91 @@ class Influx():
         measurement_list = []
 
         for item in tag_list:
-            measurement = self.client.query(query + '\'' + item + '\'' + option + str(limit))
+            measurement = self.client.query(query + "\'" + item + "\'" + option + str(limit))
             measurement_list += list(measurement)[0]
         return measurement_list
 
-    def get_mean(self, measurement, tag, field, limit=10):
-        samples = self.query_measurement_distinct_tag(measurement, tag, limit)
-        mean = 0
-        total = 0
+    def query_by_time(self, measurement, minutes=1):
+        query = ""
 
-        for sample in samples:
-            total += sample[field]
-        mean = total/len(samples)
-        return mean
+        if measurement == 'temp':
+            query = "SELECT temperature, humidity, id FROM temp where time > "
+        elif measurement == 'resource':
+            query = "SELECT cpu, memory, disk, deviceId FROM resource where time > "
+        else:
+            return None
+
+        time = datetime.utcnow() - timedelta(minutes=minutes)
+        time = str(time.strftime('%Y-%m-%dT%H:%M:%SZ'))
+
+        result_set = self.client.query(query + "\'" + time + "\'")
+        result_list = list(result_set)[0]
+        return result_list
+
+class RedisWorker():
+
+    def __init__(self):
+        self.influx = Influx()
+        self.worker = redis.StrictRedis(host='localhost', port='6379', db=0)
+
+    def groupby_data(self, origin_list, group_key):
+        sorted_list = sorted(origin_list, key = lambda k: k[group_key])
+        groupby_list = groupby(sorted_list, key = lambda k: k[group_key])
+
+        groups = []
+        keys = []
+        for key, group in groupby_list:
+            groups.append(list(group))
+            keys.append(key)
+
+        return {'keys': keys, 'groups': groups}
+
+    def mean(self, result_list, field_key):
+        numerator = float(sum(v[field_key] for v in result_list))
+        denominator = max(len(result_list), 1)
+        return numerator/denominator
+
+    def set_keyby_data(self, measurement, tag_key, minutes=1):
+        result_list = self.influx.query_by_time(measurement, minutes)
+        data = self.groupby_data(result_list, tag_key)
+
+        key_dump = pickle.dumps(data['keys'])
+        self.worker.set(measurement+"-key", key_dump)
+
+        for index, key in enumerate(data['keys']):
+            keyby_data_dump = pickle.dumps(data['groups'][int(index)])
+            self.worker.set(measurement+key, keyby_data_dump)
+        return data
+
+    def set_dump_data(self, measurement, minutes=1):
+        result_list = self.influx.query_by_time(measurement, minutes)
+
+        data_dump = pickle.dumps(result_list)
+        self.worker.set(measurement+"-dump", data_dump)
+        return data_dump
+
+    def get_keys(self, measurement):
+        keys = self.worker.get(measurement+"-key")
+        return pickle.loads(keys)
+
+    def get_keyby_data(self, measurement, tag_key=None):
+        keys = self.get_keys(measurement)
+
+        if tag_key in keys:
+            keyby_data = pickle.loads(self.worker.get(measurement+tag_key))
+        else:
+            keyby_data = []
+            for key in keys:
+                origin_data = pickle.loads(self.worker.get(measurement+key))
+                keyby_data.append(origin_data)
+
+        return keyby_data
+
+    def get_dump_data(self, measurement):
+        dump_data = pickle.loads(self.worker.get(measurement+"-dump"))
+        return dump_data
+
+    def run(self, measurement, tag_key):
+        self.set_dump_data(measurement)
+        self.set_keyby_data(measurement, tag_key)
+        print("save: " + measurement)

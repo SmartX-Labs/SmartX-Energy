@@ -27,7 +27,7 @@ function updateTemp(index, temp, hum) {
 function updateResource(index, cpu, mem, disk) {
   document.getElementsByClassName("server-rack-cpu")[parseInt(index)].innerHTML = cpu + '%';
   document.getElementsByClassName("server-rack-mem")[parseInt(index)].innerHTML = (mem/1000).toFixed(2) + 'MiB';
-  document.getElementsByClassName("server-rack-disk")[parseInt(index)].innerHTML = disk + 'KiB';
+  document.getElementsByClassName("server-rack-disk")[parseInt(index)].innerHTML = disk + '%';
 };
 
 $(document).ready(function(){

@@ -81,7 +81,7 @@
 
                 <div class="panel-body">
 
-                  <div class="col-lg-9 pad-no mar-btm">
+                  <div class="col-lg-7 pad-no mar-btm">
                     <p class="text-muted"><i class="glyphicon glyphicon glyphicon-menu-right text-sm"></i> Temparature/Humidity in Each Sector</p>
 
                     <div class="pad-btm">
@@ -96,10 +96,10 @@
                       <div class="color-palette">&nbsp;</div>
                       <div class="color-palette text-center"><span>30°C</span></div>
                     </div>
-                    <div class="row mar-no">
+                    <div class="row mar-no parallelogram">
 
                       {% for info in temp %}
-                      <div class="col-xs-4 col-md-4 pad-no">
+                      <div class="col-xs-4 pad-no">
                         <div class="panel panel-success panel-colorful mar-no server-room">
 
                           <script type="text/javascript">
@@ -118,7 +118,7 @@
 
                     </div>
 
-                    <div class="col-lg-3 pad-no">
+                    <div class="col-lg-offset-2 col-lg-3 pad-no">
                       <p class="text-muted"><i class="glyphicon glyphicon glyphicon-menu-right text-sm"></i> Average Figure</p>
                       <div id="room-chart"></div>
 
@@ -157,7 +157,7 @@
                                       <span class="label label-info">MEM</span><span class="mar-hor server-rack-mem">{{ (info.memory/1000)|round(1, 'floor') }}MiB</span>
                                     </div>
                                     <div class="col-xs-4">
-                                      <span class="label label-dark">DISK</span><span class="mar-hor server-rack-disk">{{ info.disk }}KiB</span>
+                                      <span class="label label-dark">DISK</span><span class="mar-hor server-rack-disk">{{ info.disk }}%</span>
                                     </div>
                                   </td>
                                 </tr>

@@ -80,7 +80,7 @@ class RedisWorker():
     def __init__(self):
         self.influx = Influx()
         self.worker = redis.StrictRedis(host='localhost', port='6379', db=0)
-        
+
     def groupby_data(self, origin_list, group_key):
         sorted_list = sorted(origin_list, key = lambda k: k[group_key])
         groupby_list = groupby(sorted_list, key = lambda k: k[group_key])
@@ -137,3 +137,8 @@ class RedisWorker():
     def get_dump_data(self, measurement):
         dump_data = pickle.loads(self.worker.get(measurement+"-dump"))
         return dump_data
+
+    def run(self, measurement, tag_key):
+        self.set_dump_data(measurement)
+        self.set_keyby_data(measurement, tag_key)
+        print("save: " + measurement)
