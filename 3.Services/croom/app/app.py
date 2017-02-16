@@ -59,7 +59,6 @@ def control():
     air_id = request.form['id']
     action = int(request.form['action'])
 
-
     temp = worker.get_air_temp(air_id)
     send_async_request.delay(air_id, temp, action)
     temp += action
@@ -95,7 +94,6 @@ def background_thread():
                         'resource_disk_mean': resource_disk_mean
                         },)
         socketio.sleep(2)
-
 
 @socketio.on('connect')
 def connect():
