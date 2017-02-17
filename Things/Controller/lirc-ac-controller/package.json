@@ -1,0 +1,16 @@
+{
+  "name": "lirc-ac-controller",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lirc-ac-controller.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "coap": "^0.20.0",
+    "lirc_node": "0.0.4",
+    "query-string": "^4.3.2"
+  }
+}

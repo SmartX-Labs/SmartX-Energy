@@ -1,9 +1,8 @@
 var kafka = require('kafka-node');
 var coap = require('coap')
 
-//192.168.0.114
 const controlAgentIp = 'senics';
-// Kafka - Temp
+
 var Kafka = new kafka.Client('hub1:2181');
 var Offset = new kafka.Offset(Kafka);
 
