@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lirc_node": "0.0.4"
+    "coap": "^0.20.0",
+    "lirc_node": "0.0.4",
+    "query-string": "^4.3.2"
   }
 }
