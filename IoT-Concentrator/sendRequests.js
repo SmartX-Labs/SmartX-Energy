@@ -2,8 +2,7 @@ var kafka = require('kafka-node');
 var coap = require('coap')
 
 //192.168.0.114
-const controlAgentIp = 'localhost';
-
+const controlAgentIp = 'senics';
 // Kafka - Temp
 var Kafka = new kafka.Client('hub1:2181');
 var Offset = new kafka.Offset(Kafka);
@@ -57,12 +56,14 @@ Consumer.on('message', function(message) {
         query: controlMsg,
         method: 'PUT'
     })
+
+console.log(req.url);
     req.on('response', function(res) {
         res.pipe(process.stdout)
-
+//	console.log(res);
         //res.on('end', function() {})
 
-    
+
 
 })
 
