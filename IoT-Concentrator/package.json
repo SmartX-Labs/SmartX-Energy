@@ -1,10 +1,10 @@
 {
-  "name": "coap_server",
+  "name": "IoTController",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "IoTController.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node IoTController.js"
   },
   "author": "",
   "license": "ISC",
