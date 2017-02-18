@@ -6,6 +6,9 @@ import urllib3
 
 from flask_socketio import SocketIO, emit, disconnect
 from celery import Celery
+from celery import current_app
+from celery.bin import worker as celery_worker
+
 from db import RedisWorker
 
 # Flask configuration
@@ -27,12 +30,15 @@ worker = RedisWorker()
 
 # urllib3 configuration
 http = urllib3.PoolManager()
-url = ''
+url = '203.237.53.111:4000/control/temp/?'
 
 @celery.task
 def send_async_request(air_id, temp, action):
     print("request: " + air_id, temp, action)
-    request = http.request('POST', url,
+    parameter = "name=" + air_id + "&temperature=" + str(temp) + "&direction=" + str(action)
+    request = http.request('PUT',
+                        url+parameter,
+                        headers={'Content-Type': 'application/json'},
                         fields={'name': air_id, 'temperature': temp, 'direction': action})
     return request.status
 
@@ -107,5 +113,13 @@ def disconnect():
     print('Client disconnected', request.sid)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
     socketio.run(app)
+    # current = current_app._get_current_object()
+    # celery_worker = celery_worker.worker(app=current)
+    # options = {
+    #     'broker': app.config['CELERY_BROKER_URL'],
+    #     'loglevel': 'INFO',
+    #     'traceback': True,
+    # }
+    # celery_worker.run(**options)

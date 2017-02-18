@@ -79,7 +79,7 @@ class RedisWorker():
 
     def __init__(self):
         self.influx = Influx()
-        self.worker = redis.StrictRedis(host='localhost', port='6379', db=0)
+        self.worker = redis.StrictRedis(host='localhost', port='6379', db=1)
 
     def groupby_data(self, origin_list, group_key):
         sorted_list = sorted(origin_list, key = lambda k: k[group_key])

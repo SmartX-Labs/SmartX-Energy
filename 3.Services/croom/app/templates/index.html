@@ -66,18 +66,6 @@
                               <i class="glyphicon glyphicon-tint"></i><span class="text-bold server-room-hum">{{ info.humidity }}</span>
                           </div>
                         </div>
-                        <div class="col-xs-4 pad-no">
-                          <div class="panel panel-success panel-colorful mar-no server-room pad-all">
-
-                            <script type="text/javascript">
-                            colorPalette({{ loop.index-1 }}, {{ info.temperature }});
-                            </script>
-
-                              <center>
-                                <span class="text-bold server-room-temp">{{ info.temperature }}</span><span class="text-bold">℃</span><br>
-                                <i class="glyphicon glyphicon-tint"></i><span class="text-bold server-room-hum">{{ info.humidity }}</span>
-                            </div>
-                          </div>
                         {% endfor %}
                       </div>
 
