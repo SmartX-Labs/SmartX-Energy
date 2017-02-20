@@ -58,7 +58,7 @@ class Influx():
             measurement_list += list(measurement)[0]
         return measurement_list
 
-    def query_by_time(self, measurement, minutes=1):
+    def query_by_time(self, measurement, minutes=30):
         query = ""
 
         if measurement == 'temp':
@@ -69,10 +69,14 @@ class Influx():
             return None
 
         time = datetime.utcnow() - timedelta(minutes=minutes)
-        time = str(time.strftime('%Y-%m-%dT%H:%M:%SZ'))
+        # time = str(time.strftime('%Y-%m-%dT%H:%M:%SZ'))
 
-        result_set = self.client.query(query + "\'" + time + "\'")
-        result_list = list(result_set)[0]
+        result_set = self.client.query(query + "\'" + str(time) + "\'")
+        result_list = list(result_set)
+
+        if len(result_list) > 0:
+            result_list = result_list[0]
+
         return result_list
 
 class RedisWorker():
@@ -100,22 +104,27 @@ class RedisWorker():
 
     def set_keyby_data(self, measurement, tag_key, minutes=1):
         result_list = self.influx.query_by_time(measurement, minutes)
-        data = self.groupby_data(result_list, tag_key)
+        print(len(result_list))
 
-        key_dump = pickle.dumps(data['keys'])
-        self.worker.set(measurement+"-key", key_dump)
+        if len(result_list) > 0:
+            data = self.groupby_data(result_list, tag_key)
 
-        for index, key in enumerate(data['keys']):
-            keyby_data_dump = pickle.dumps(data['groups'][int(index)])
-            self.worker.set(measurement+key, keyby_data_dump)
-        return data
+            key_dump = pickle.dumps(data['keys'])
+            self.worker.set(measurement+"-key", key_dump)
+
+            for index, key in enumerate(data['keys']):
+                keyby_data_dump = pickle.dumps(data['groups'][int(index)])
+                self.worker.set(measurement+key, keyby_data_dump)
+            return data
 
     def set_dump_data(self, measurement, minutes=1):
         result_list = self.influx.query_by_time(measurement, minutes)
+        print(len(result_list))
 
-        data_dump = pickle.dumps(result_list)
-        self.worker.set(measurement+"-dump", data_dump)
-        return data_dump
+        if len(result_list) > 0:
+            data_dump = pickle.dumps(result_list)
+            self.worker.set(measurement+"-dump", data_dump)
+            return data_dump
 
     def get_keys(self, measurement):
         keys = self.worker.get(measurement+"-key")

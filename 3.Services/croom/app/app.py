@@ -5,9 +5,6 @@ from flask import Flask, request, render_template, session, flash, redirect, \
 import urllib3
 
 from flask_socketio import SocketIO, emit, disconnect
-from celery import Celery
-from celery import current_app
-from celery.bin import worker as celery_worker
 
 from db import RedisWorker
 
@@ -19,28 +16,8 @@ async_mode = None
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 
-# Celery configuration
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
-
 # Worker configuration
 worker = RedisWorker()
-
-# urllib3 configuration
-http = urllib3.PoolManager()
-url = '203.237.53.111:4000/control/temp/?'
-
-@celery.task
-def send_async_request(air_id, temp, action):
-    print("request: " + air_id, temp, action)
-    parameter = "name=" + air_id + "&temperature=" + str(temp) + "&direction=" + str(action)
-    request = http.request('PUT',
-                        url+parameter,
-                        headers={'Content-Type': 'application/json'},
-                        fields={'name': air_id, 'temperature': temp, 'direction': action})
-    return request.status
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -66,9 +43,18 @@ def control():
     action = int(request.form['action'])
 
     temp = worker.get_air_temp(air_id)
-    send_async_request.delay(air_id, temp, action)
     temp += action
     worker.set_air_temp(air_id, temp)
+
+    # urllib3 configuration
+    http = urllib3.PoolManager()
+    url = '203.237.53.111:4000/control/temp/?'
+
+    parameter = "name=" + air_id + "&temperature=" + str(temp) + "&direction=" + str(action)
+    http.request('PUT',
+                url+parameter,
+                headers={'Content-Type': 'application/json'},
+                )
 
     return jsonify({}), 200, {'temperature': temp}
 
@@ -115,11 +101,3 @@ def disconnect():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
     socketio.run(app)
-    # current = current_app._get_current_object()
-    # celery_worker = celery_worker.worker(app=current)
-    # options = {
-    #     'broker': app.config['CELERY_BROKER_URL'],
-    #     'loglevel': 'INFO',
-    #     'traceback': True,
-    # }
-    # celery_worker.run(**options)
