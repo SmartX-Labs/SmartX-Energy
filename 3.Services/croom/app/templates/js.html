@@ -7,66 +7,24 @@
 
 {% include 'js_ui.html' %}
 {% include 'js_chart.html' %}
+{% include 'js_socketio.html' %}
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 
 <script type="text/javascript" charset="utf-8">
 
-$(document).ready(function() {
-
-  namespace = ''; //TODO Add it after complete control functions
-
-  var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-  socket.on('connect', function() {
-    socket.emit('my event', {data: 'I\'m connected!'});
-  });
-
-  socket.on('background_thread', function(msg) {
-    var temp = JSON.parse(msg.temp);
-    var resource = JSON.parse(msg.resource);
-    var temp_mean = parseInt(msg.temp_mean);
-    var resource_cpu_mean = parseInt(msg.resource_cpu_mean);
-    var resource_mem_mean = parseInt(msg.resource_mem_mean);
-    var resource_disk_mean = parseInt(msg.resource_disk_mean);
-
-    for (i=0; i<temp.length; i++) {
-      colorPalette(i, temp[i].temperature);
-      updateTemp(i, temp[i].temperature, temp[i].humidity);
+function control(id, action) {
+  $.ajax({
+    type: "POST",
+    url: "/control",
+    dataType: "json",
+    data: {'id': id, 'action': action},
+    success: function(data, status, request) {
+      var temp = request.getResponseHeader("temperature");
+      document.getElementsByClassName("control-temp")[parseInt(id)-1].innerHTML = temp + "°C";
+    },
+    error: function() {
+      alert("Unexpected error");
     }
-
-    for (i=0; i<resource.length; i++) {
-      updateResource(i, resource[i].cpu, resource[i].memory, resource[i].disk);
-    }
-
-
-    temp_data = [['temperature', temp_mean]];
-    cpu_data = [['usage', resource_cpu_mean]];
-    mem_data = [['usage', resource_mem_mean/1000 ]];
-    disk_data = [['usage', resource_disk_mean]];
-
-    roomChart.load({
-      unload: true,
-      columns: temp_data
-    });
-
-    cpuChart.load({
-      unload: true,
-      columns: cpu_data
-    });
-
-    memChart.load({
-      unload: true,
-      columns: mem_data
-    });
-
-    diskChart.load({
-      unload: true,
-      columns: disk_data
-    });
-
-
   });
-});
-
+}
 </script>

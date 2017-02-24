@@ -58,7 +58,7 @@ class Influx():
             measurement_list += list(measurement)[0]
         return measurement_list
 
-    def query_by_time(self, measurement, minutes=30):
+    def query_by_time(self, measurement, minutes=1):
         query = ""
 
         if measurement == 'temp':
@@ -69,21 +69,17 @@ class Influx():
             return None
 
         time = datetime.utcnow() - timedelta(minutes=minutes)
-        # time = str(time.strftime('%Y-%m-%dT%H:%M:%SZ'))
+        time = str(time.strftime('%Y-%m-%dT%H:%M:%SZ'))
 
-        result_set = self.client.query(query + "\'" + str(time) + "\'")
-        result_list = list(result_set)
-
-        if len(result_list) > 0:
-            result_list = result_list[0]
-
+        result_set = self.client.query(query + "\'" + time + "\'")
+        result_list = list(result_set)[0]
         return result_list
 
 class RedisWorker():
 
     def __init__(self):
         self.influx = Influx()
-        self.worker = redis.StrictRedis(host='localhost', port='6379', db=1)
+        self.worker = redis.StrictRedis(host='localhost', port='6379', db=0)
 
     def groupby_data(self, origin_list, group_key):
         sorted_list = sorted(origin_list, key = lambda k: k[group_key])
@@ -97,34 +93,29 @@ class RedisWorker():
 
         return {'keys': keys, 'groups': groups}
 
-    def mean_dump_data(self, dump_data, field_key):
-        numerator = float(sum(v[field_key] for v in dump_data))
-        denominator = max(len(dump_data), 1)
+    def mean(self, result_list, field_key):
+        numerator = float(sum(v[field_key] for v in result_list))
+        denominator = max(len(result_list), 1)
         return numerator/denominator
 
     def set_keyby_data(self, measurement, tag_key, minutes=1):
         result_list = self.influx.query_by_time(measurement, minutes)
-        print(len(result_list))
+        data = self.groupby_data(result_list, tag_key)
 
-        if len(result_list) > 0:
-            data = self.groupby_data(result_list, tag_key)
+        key_dump = pickle.dumps(data['keys'])
+        self.worker.set(measurement+"-key", key_dump)
 
-            key_dump = pickle.dumps(data['keys'])
-            self.worker.set(measurement+"-key", key_dump)
-
-            for index, key in enumerate(data['keys']):
-                keyby_data_dump = pickle.dumps(data['groups'][int(index)])
-                self.worker.set(measurement+key, keyby_data_dump)
-            return data
+        for index, key in enumerate(data['keys']):
+            keyby_data_dump = pickle.dumps(data['groups'][int(index)])
+            self.worker.set(measurement+key, keyby_data_dump)
+        return data
 
     def set_dump_data(self, measurement, minutes=1):
         result_list = self.influx.query_by_time(measurement, minutes)
-        print(len(result_list))
 
-        if len(result_list) > 0:
-            data_dump = pickle.dumps(result_list)
-            self.worker.set(measurement+"-dump", data_dump)
-            return data_dump
+        data_dump = pickle.dumps(result_list)
+        self.worker.set(measurement+"-dump", data_dump)
+        return data_dump
 
     def get_keys(self, measurement):
         keys = self.worker.get(measurement+"-key")
@@ -143,19 +134,6 @@ class RedisWorker():
 
         return keyby_data
 
-    def get_keyby_data_last(self, measurement, tag_key=None):
-        keys = self.get_keys(measurement)
-
-        if tag_key in keys:
-            keyby_data_last = pickle.loads(self.worker.get(measurement+tag_key))[-1]
-        else:
-            keyby_data_last = []
-            for key in keys:
-                origin_data = pickle.loads(self.worker.get(measurement+key))
-                keyby_data_last.append(origin_data[-1])
-
-        return keyby_data_last
-
     def get_dump_data(self, measurement):
         dump_data = pickle.loads(self.worker.get(measurement+"-dump"))
         return dump_data
@@ -164,14 +142,3 @@ class RedisWorker():
         self.set_dump_data(measurement)
         self.set_keyby_data(measurement, tag_key)
         print("save: " + measurement)
-
-    def set_air_temp(self, air_id, temp):
-        dump = pickle.dumps(temp)
-        self.worker.set("air-" + air_id, dump)
-
-    def get_air_temp(self, air_id):
-        dump = self.worker.get("air-" + air_id)
-        if dump == None:
-            return None
-        else:
-            return pickle.loads(dump)

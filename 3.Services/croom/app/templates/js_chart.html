@@ -1,22 +1,50 @@
 <script type="text/javascript">
 
-var roomChart;
+var tempChart;
+var humChart;
 var cpuChart;
 var memChart;
 var diskChart;
 
 $(document).ready(function(){
 
-  roomChart = c3.generate({
-    bindto: "#room-chart",
+  tempChart = c3.generate({
+    bindto: "#temp-chart",
     data: {
       columns: [
         ['temperature', 0]
       ],
-      type: 'gauge',
-      onclick: function (d, i) { console.log("onclick", d, i); },
-      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+      type: 'gauge'
+    },
+    gauge: {
+      label: {
+        format: function(value, ratio) {
+          return value;
+        },
+        show: true // to turn off the min/max labels.
+      },
+      min: startTemp, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+      max: endTemp, // 100 is default
+      units: 'Temperature',
+    },
+    color: {
+      pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
+      threshold: {
+        values: [15, 25, 35]
+      }
+    },
+    size: {
+      height: 180
+    }
+  });
+
+  humChart = c3.generate({
+    bindto: "#hum-chart",
+    data: {
+      columns: [
+        ['humidity', 0]
+      ],
+      type: 'gauge'
     },
     gauge: {
       label: {
@@ -26,13 +54,13 @@ $(document).ready(function(){
         show: true // to turn off the min/max labels.
       },
       min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-      max: 30, // 100 is default
-      units: '°C',
+      max: 100, // 100 is default
+      units: 'Humidity',
     },
     color: {
       pattern: ['#90CAF9', '#9bb6e0', '#d35164'], // the three color levels for the percentage values.
       threshold: {
-        values: [10, 20, 30]
+        values: [15, 25, 35]
       }
     },
     size: {
@@ -46,10 +74,7 @@ $(document).ready(function(){
       columns: [
         ['usage', 0]
       ],
-      type: 'gauge',
-      onclick: function (d, i) { console.log("onclick", d, i); },
-      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+      type: 'gauge'
     },
     gauge: {
       label: {
@@ -79,10 +104,7 @@ $(document).ready(function(){
       columns: [
         ['usage', 0]
       ],
-      type: 'gauge',
-      onclick: function (d, i) { console.log("onclick", d, i); },
-      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+      type: 'gauge'
     },
     gauge: {
       label: {
@@ -112,10 +134,7 @@ $(document).ready(function(){
       columns: [
         ['usage', 0]
       ],
-      type: 'gauge',
-      onclick: function (d, i) { console.log("onclick", d, i); },
-      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+      type: 'gauge'
     },
     gauge: {
       label: {
