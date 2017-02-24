@@ -1,0 +1,16 @@
+{
+  "name": "IRController",
+  "version": "0.0.1",
+  "description": "",
+  "main": "coap_server.js",
+  "scripts": {
+    "start": "node coap_server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "coap": "^0.20.0",
+    "lirc_node": "0.0.4",
+    "query-string": "^4.3.2"
+  }
+}

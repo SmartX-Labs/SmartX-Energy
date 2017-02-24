@@ -1,0 +1,16 @@
+{
+  "name": "IoTController",
+  "version": "1.0.0",
+  "description": "",
+  "main": "IoTController.js",
+  "scripts": {
+    "start": "node IoTController.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "coap": "^0.20.0",
+    "kafka-node": "^1.4.0",
+    "query-string": "^4.3.2"
+  }
+}
