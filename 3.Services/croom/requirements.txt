@@ -6,7 +6,7 @@ click==6.7
 Flask==0.12
 Flask-Redis==0.3.0
 Flask-SocketIO==2.8.2
-flower==0.9.1
+flower==1.2.0
 futures==3.0.5
 gevent==1.2.1
 greenlet==0.4.12
